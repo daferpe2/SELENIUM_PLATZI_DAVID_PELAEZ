@@ -12,7 +12,7 @@ today=datetime.date.today().strftime('%Y-%m-%d')
 class TestingArc(unittest.TestCase):
     # ingreser a la pagina que se busca automatizar
     def setUp(self):
-        self.driver = webdriver.Chrome(executable_path='./chromedriver.exe')
+        self.driver = webdriver.Chrome(executable_path='../chromedriver.exe')
         driver = self.driver
         driver.maximize_window()
         driver.implicitly_wait(30)
@@ -25,26 +25,38 @@ class TestingArc(unittest.TestCase):
         for i in range(4):
             not2 = driver.find_element(By.XPATH,f'//div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div/div[{i + 1}]/div[4]/span/a')
             not2.click()
-            sleep(2)
+            sleep(2) 
             noticia = driver.find_element(By.XPATH,'//div[1]/div[2]/div/div/div/div/header/h2')
             print(noticia.text)
-            lista_noticias.append(noticia)
+            lista_noticias.append(noticia.text)
             cuerpo = driver.find_element(By.XPATH,'//div[1]/div[2]/div/div/div/div/div/div/div/div/div/div/div/div/div[3]/div/div/p')
             print(cuerpo.text)
             lista_noticias.append(cuerpo.text)
             driver.back()
+        print(lista_noticias)
 
         # escritura de un archivo txt con el texto resultante de la automatización
         try:
             with open(f'{today}.txt','w',encoding='utf-8') as f:
                 for o in lista_noticias:
                     f.write('%s\n' % o)
-                    f.write('\n\n')
+                    f.write('*'*55 + '\n')
 
         except ValueError as ve:
             print(ve)
-            
+        
         sleep(1)
+        
+        try:
+            file = open(f'{today}.csv', 'w', encoding='utf-8')
+            with file:
+                writer = csv.writer(file)
+                writer.writerow(lista_noticias)
+                
+        except ValueError as ve:
+            print(ve)
+                        
+
 
       
     def tearDown(self):
